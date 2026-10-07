@@ -30,7 +30,7 @@ import time
 # - G1 X175 Y175 Z60  (above aluminium plate, set your own z-homing position here)
 # - place the aluminium plate below cartographer (carto approx middle of the plate), nearly orthogonal with the build plate
 # CHOME (home on the top of the plate), Z-homing xy coordinates MUST be approx middle of the plate)
-# MEASURE_SKEW XCENTER=175.0 YCENTER=175.0 ZHEIGHT=2.0 SCANSPEED=50 MOVESPEED=200 SAVEDIST=20.0 NMEAS=9
+# MEASURE_SKEW XCENTER=175.0 YCENTER=175.0 ZHEIGHT=2.0 SCANSPEED=20 MOVESPEED=200 SAVEDIST=25.0 NMEAS=9
 # Rotate the plate by 90° around the Z-axis.
 # Repeat the previous two steps four times.
 
@@ -496,7 +496,7 @@ class SkewScanner:
         self.scanspeed = gcmd.get_float('SCANSPEED', 20.0)
         self.movespeed = gcmd.get_float('MOVESPEED', 200.0)
         self.savedist = gcmd.get_float('SAVEDIST', 25.0)
-        self.nmeas = gcmd.get_int('NMEAS', 20)
+        self.nmeas = gcmd.get_int('NMEAS', 9)
 
         # get min/max coordinates of the printer.
         # reserve savedist(=20mm) buffer
