@@ -22,7 +22,7 @@ d) calculate the xy-skew and printout the correction functionality for printer.c
 - G1 X175 Y175 Z60  (set your own z-homing position here, should be approximately in the middle of the bed)
 - place the aluminium plate below cartographer (carto approx middle of the plate), nearly orthogonal with the build plate
 - G28 z (home on the top of the plate), Z-homing xy coordinates MUST be approx middle of the plate)
-- MEASURE_SKEW XCENTER=175.0 YCENTER=175.0 ZHEIGHT=2.0 SCANSPEED=50 MOVESPEED=200 SAVEDIST=20.0 NMEAS=9
+- MEASURE_SKEW XCENTER=175.0 YCENTER=175.0 ZHEIGHT=2.0 SCANSPEED=20 MOVESPEED=200 SAVEDIST=25.0 NMEAS=9
   default values are given, corresponding parameters can be skipped
 - After measurement is finished, rotate the aluminium plate by 90° around the Z-axis.
 - Repeat the previous two steps four times.
