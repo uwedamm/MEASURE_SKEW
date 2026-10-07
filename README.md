@@ -29,7 +29,7 @@ d) calculate the xy-skew and printout the correction functionality for printer.c
 
 ## Theory
 &#x3B1;
-
+![image alt](https://github.com/uwedamm/MEASURE_SKEW/blob/6370b14421278fa220de1d9e08ca6065606281be/pictures/skewNone.png)
 
 
 
