@@ -28,7 +28,7 @@ d) calculate the xy-skew and printout the correction functionality for printer.c
 - Repeat the previous two steps four times.
 
 ## Theory
-
+&#x3B1;
 
 
 
