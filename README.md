@@ -28,10 +28,18 @@ d) calculate the xy-skew and printout the correction functionality for printer.c
 - Repeat the previous two steps four times.
 
 ## Theory
-&#x3B1;
+Scanning the aluminiumplate by using the cartographer gives the measure(!) directions of the 4 edges of the aluminium plate.
+If these 4 directions are measured with the plate being rotated by 90°, the corner angles of the plate and the xy-skew can be calculated.  
+
+How does that work. Let us do some "Gedankenexperiment". If you look at the figure below, you see one corner of a plate, which is far aways from being orthogonal.
+Lets assume, that the xy-skew of the printer would be 0. I.e. x- and y-axis are orthogonal to each other.
+For this case, both measurements would deliver the same measured(!) angle, which is the corner angle of the plate.  
+
+&#x3B1;_1=&#x3B1;_2=&#x3B1;  
+
 ![image alt](https://github.com/uwedamm/MEASURE_SKEW/blob/6370b14421278fa220de1d9e08ca6065606281be/pictures/skewNone.png)
 
-
+Now let us assume, the block would be exactly orthogonal, but the xy-skew would there, i.e. an angle between x- and y-axix of <90°
 
 
 ## Experimental results
