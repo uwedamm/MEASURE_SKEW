@@ -39,7 +39,9 @@ For this case, both measurements would deliver the same measured(!) angle, which
 
 ![image alt](https://github.com/uwedamm/MEASURE_SKEW/blob/6370b14421278fa220de1d9e08ca6065606281be/pictures/skewNone.png)
 
-Now let us assume, the block would be exactly orthogonal, but the xy-skew would there, i.e. an angle between x- and y-axix of <90°
+Now let us assume, the block would be exactly orthogonal, but the xy-skew would there, i.e. an angle between x- and y-axix of <90°  
+
+![image alt](https://github.com/uwedamm/MEASURE_SKEW/blob/6370b14421278fa220de1d9e08ca6065606281be/pictures/skewWith.png)
 
 
 ## Experimental results
