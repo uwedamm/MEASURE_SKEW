@@ -9,6 +9,9 @@
    id="svg1"
    inkscape:version="1.4.4 (dcaf3e7d9e, 2026-05-05)"
    sodipodi:docname="skewWith.svg"
+   inkscape:export-filename="skewWith.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -68,7 +71,7 @@
        transform="matrix(0.26458333,0,0,0.26458333,9.0252155,2.1122845)"
        id="text9"
        style="writing-mode:lr-tb;direction:ltr;white-space:pre;shape-inside:url(#rect10);shape-padding:0;display:inline;fill:none;fill-opacity:1;stroke:#010707;stroke-width:1.00157;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       inkscape:export-filename="skewNone.png"
+       inkscape:export-filename="skewWith.png"
        inkscape:export-xdpi="96"
        inkscape:export-ydpi="96"><tspan
          x="178.17578"
