@@ -90,8 +90,8 @@ therefore slightly more involved, but the underlying principle remains exactly t
 
 - Averaging the measurements isolates the geometry of the aluminium plate.
 - Taking the difference between the measurements isolates the printer's XY skew.
-
-
+To perform the measurement, MEASURE_SKEW need to be executed 4 times, rotating the plate CCW by 90° each.
+After the 4th MEASURE_SKEW was executed, the python prints out the measurement results to the console.
 
 
 ## Experimental results
