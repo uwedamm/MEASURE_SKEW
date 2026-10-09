@@ -27,24 +27,78 @@ d) calculate the xy-skew and printout the correction functionality for printer.c
 - After measurement is finished, rotate the aluminium plate by 90° around the Z-axis.
 - Repeat the previous two steps four times.
 
-## Theory
-Scanning the aluminiumplate by using the cartographer gives the measure(!) directions of the 4 edges of the aluminium plate.
-If these 4 directions are measured with the plate being rotated by 90°, the corner angles of the plate and the xy-skew can be calculated.  
+## Principle of the Measurement
 
-How does that work. Let us do some "Gedankenexperiment". If you look at the figure below, you see one corner of a plate, which is far aways from being orthogonal.
-Lets assume, that the xy-skew of the printer would be 0. I.e. x- and y-axis are orthogonal to each other.
-For this case, both measurements would deliver the same measured(!) angle, which is the corner angle of the plate.  
+Scanning the aluminium plate with the Cartographer probe provides
+the measured directions of the four edges of the aluminium plate.
 
-&#x3B1;_1=&#x3B1;_2=&#x3B1;  
+By repeating the measurement after rotating the aluminium plate by 90°,
+both the corner angles of the aluminium plate and the XY skew of the
+printer can be determined.
+
+### How does this work?
+
+Let's perform a simple thought experiment.
+
+In the figure below, one corner of an aluminium plate is shown with
+a corner angle that is far from being perfectly orthogonal.
+
+Assume first that the printer has **no XY skew**, meaning that the
+X and Y axes are exactly perpendicular to each other.
+
+In this case, both measurements will report the same measured angle,
+which corresponds directly to the actual corner angle of the aluminium plate:
+
+$$
+\alpha_1 = \alpha_2 = \alpha
+$$
 
 ![image alt](https://github.com/uwedamm/MEASURE_SKEW/blob/6370b14421278fa220de1d9e08ca6065606281be/pictures/skewNone.png)
 
-Now let us assume, the block would be exactly orthogonal, but the xy-skew would there, i.e. an angle between x- and y-axix of <90°  
+Now consider the opposite case: the aluminium plate itself is perfectly square, but the
+printer exhibits XY skew, meaning that the angle between the X and Y axes is smaller than 90°.
 
-![image alt](https://github.com/uwedamm/MEASURE_SKEW/blob/978245b53feaf402f351e1ed5b2854937a513126/pictures/skewWith.png)
+![image alt](https://github.com/uwedamm/MEASURE_SKEW/blob/409d795366974f0b7dcc318511d79b359f655a36/pictures/skewWith.png)
+
+When the corner of the aluminium plate points towards the south-east (SE), the measured angle is
+
+$$
+\alpha_1 < 90^\circ
+$$
+
+After rotating the aluminium plate by 90°, the same corner produces the opposite result:
+
+$$
+\alpha_2 > 90^\circ
+$$
+
+The true corner angle of the aluminium plate can then be calculated as the average of the two measurements:
+
+$$
+\text{plate-angle} = \frac{\alpha_1 + \alpha_2}{2}
+$$
+
+The XY skew angle is obtained from half the difference between the measurements:
+
+$$
+\text{xy-skew} = \frac{\alpha_1 - \alpha_2}{2}
+$$
+
+In the actual implementation, all four corners are measured with the aluminium
+plate oriented towards SW, SE, NE, and NW. The resulting calculations are
+therefore slightly more involved, but the underlying principle remains exactly the same:
+
+- Averaging the measurements isolates the geometry of the aluminium plate.
+- Taking the difference between the measurements isolates the printer's XY skew.
+To perform the measurement, MEASURE_SKEW need to be executed 4 times, rotating the plate CCW by 90° each.
+After the 4th MEASURE_SKEW was executed, the python prints out the measurement results to the console.
 
 
 ## Experimental results
+
+tbd
+
+
 
 ## Comparison to other concepts
 ### print calibration object and measure with calliper  
