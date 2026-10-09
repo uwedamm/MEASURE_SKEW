@@ -518,6 +518,9 @@ class SkewScanner:
         self.xmax -= self.savedist
         self.ymax -= self.savedist
 
+
+        self.log(f"Usage")
+        self.log(f"MEASURE_SKEW XCENTER=175.0 YCENTER=175.0 ZHEIGHT=2.0 SCANSPEED=20 MOVESPEED=200 SAVEDIST=25.0 NMEAS=9")
         self.log(f"Starting. Corner (1) must point to {self.CORNER_LOCATIONS[self.meascnt - 1]}"
 )
 
@@ -625,12 +628,13 @@ class SkewScanner:
         [ang_S, dev_ang_S] = self.get_angle(edg_S_koo)
         [ang_N, dev_ang_N] = self.get_angle(edg_N_koo)
 
-        if self.DEBUGPRINT:
-            self.log(f"phi_W={ang_W} +/- {dev_ang_W}")
-            self.log(f"phi_E={ang_E} +/- {dev_ang_E}")
-            self.log(f"phi_S={ang_S} +/- {dev_ang_S}")
-            self.log(f"phi_N={ang_N} +/- {dev_ang_N}")
-            self.log(f"phi_N={ang_N:.5f},phi_S={ang_S:.5f},phi_E={ang_E:.5f},phi_W={ang_W:.5f}")
+#        if self.DEBUGPRINT:
+# should be printed always, I would like to have an idea about the accuracy
+        self.log(f"phi_W={ang_W:.5f} +/- {dev_ang_W:.5f}")
+        self.log(f"phi_E={ang_E:.5f} +/- {dev_ang_E:.5f}")
+        self.log(f"phi_S={ang_S:.5f} +/- {dev_ang_S:.5f}")
+        self.log(f"phi_N={ang_N:.5f} +/- {dev_ang_N:.5f}")
+        self.log(f"phi_N={ang_N:.5f},phi_S={ang_S:.5f},phi_E={ang_E:.5f},phi_W={ang_W:.5f}")
 
         # These are the - measured! - angles of the block in the different corners.
         #  when these values are known for each rotation of the block,
