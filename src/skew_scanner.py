@@ -73,8 +73,9 @@ class SkewScanner:
 
 # TAKE care, if the printing/writing to file takes "too long", the scanner will through error
 #    Scanner sensor not receiving data. Transition to shutdown state:
+#   This failure also comes, when 3D printing takes place, after the calibration is done (reboot before!)
 # enable writing scans to txt-file
-        self.DEBUGSCANS2TXT = True
+        self.DEBUGSCANS2TXT = False         # Better keep False here, see above
 # enable additional printouts to the klippy.log and console screen
         self.DEBUGPRINT = False
 
@@ -235,6 +236,7 @@ class SkewScanner:
 
         for edgeId in range(4):
             self.log(f"m_phi_plate_xy[{edgeId}]=, {m_phi_plate_xy[edgeId]:.5f}")
+        self.log(f"{m_phi_plate_xy[0]:.5f},{m_phi_plate_xy[1]:.5f},{m_phi_plate_xy[2]:.5f},{m_phi_plate_xy[3]:.5f}")
         self.log(f"m_phi_xy=, {m_phi_xy:.5f}, meanphi_plate_all_xy={meanphi_plate_all_xy:.5f}")
 
         self.print_skew(m_phi_xy)
