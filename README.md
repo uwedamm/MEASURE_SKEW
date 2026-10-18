@@ -1,7 +1,42 @@
 
+WARNING!!!
+!!! Never forget to home Z on the top of the plate, after the plate was put on the bed.
+Else the print-head will crash into the plate and may damage !!!
+
+Use at your own risk.
+
 
 # MEASURE_SKEW
 Klipper Python extension to measure xy-skew using approx squared aluminium plate.
+
+# Introduction
+XY skew occurs when the X and Y axes are not perfectly perpendicular to each other.
+Instead of forming a perfect 90-degree angle, features become shifted
+and dimensions may no longer match the intended design.
+The resulting dimensional error may be small on tiny prints,
+but it becomes increasingly visible on larger and more
+precise parts.
+
+## What is MEASURE_SKEW
+MEASURE_SKEW is a klipper extension for accurately
+measuring XY skew on a 3D printer using an inductive probe and
+a simple aluminum reference plate.
+
+### The aluminium plate
+An aluminum plate provides a stable and repeatable reference
+surface that can be detected reliably by inductive probes.
+The reference plate does not need to be a precision-machined square.
+A thickness of approximately 5 millimeters is expected
+to be sufficient. In my setup I use a 10 millimeter
+thick plate simply because it was already available.
+The corner angles do not need to be highly accurate.
+
+### The inductive probe
+This demonstration uses a Cartographer probe. However,
+the concept itself is not limited to Cartographer.
+Any inductive probe that can reliably detect the aluminum plate
+with sufficient repeatability should be suitable
+for this measurement method.
 
 # Preconditions (HW)
 To use this script, you need a 50x50 mm to 150x150 mm aluminium plate or block.  
@@ -28,7 +63,6 @@ d) calculate the xy-skew and printout the correction functionality for printer.c
 - Repeat the previous two steps four times.
 
 ## Principle of the Measurement
-
 Scanning the aluminium plate with the Cartographer probe provides
 the measured directions of the four edges of the aluminium plate.
 
@@ -37,7 +71,6 @@ both the corner angles of the aluminium plate and the XY skew of the
 printer can be determined.
 
 ### How does this work?
-
 Let's perform a simple thought experiment.
 
 In the figure below, one corner of an aluminium plate is shown with
@@ -88,20 +121,48 @@ In the actual implementation, all four corners are measured with the aluminium
 plate oriented towards SW, SE, NE, and NW. The resulting calculations are
 therefore slightly more involved, but the underlying principle remains exactly the same:
 
-- Averaging the measurements isolates the geometry of the aluminium plate.
-- Taking the difference between the measurements isolates the printer's XY skew.
-To perform the measurement, MEASURE_SKEW need to be executed 4 times, rotating the plate CCW by 90° each.
+An example measurement can be found at: TODO upload to youtube and paste link here
+
+
+### The four measurements?
+To determine the xy-skew, MEASURE_SKEW need to be executed 4 times, rotating the plate CCW by 90° each.
 After the 4th MEASURE_SKEW was executed, the python prints out the measurement results to the console.
+
+The four measurements serve important purposes:
+- Reduce random measurement errors and improve repeatability.
+- Averaging the measurements isolates the geometry of the aluminium plate.
+Even if the plate is not perfectly square, its angular
+imperfections cancel out over the four different orientations.
+This allows accurate skew measurements without requiring
+a precision reference artifact.
+- Taking the difference between the measurements isolates the printer's XY skew.
 
 
 ## Experimental results
 
-tbd
+### Expected accuracy
+The four measurements in complete typically require less than
+30 minutes. For the video I used a short version only,
+with high speed scanning and only 4 scans in both directions
+used. This is just to keep the video short. For real measurements a scanspeed of
+20mm/s and NMEAS equals 9 scans should be used for higher accuracy.
+Based on my testing, approximately 0.2 millimeters per meter could be achieved for the xy-skew value.
+This makes the method suitable even for printers where
+very small skew errors need to be detected and corrected.
+
+### Measurement results
+The following measurement were performed on my Voron 2.4, which is equipped with an A4T toolhead and a cartographer probe.
+
+TODO add my measurements of the 100x100x10 and 80x80x20mm plate
 
 
 
 ## Comparison to other concepts
+
 ### print calibration object and measure with calliper  
+Klipper already provides a skew calibration feature based
+on measuring printed calibration objects.  
+
 [xy-skew-calibration-test-part](https://www.printables.com/model/67374-xy-skew-calibration-test-part)  
 [vernier-skew-test](https://www.printables.com/model/1143218-vernier-skew-test)  
 [calibration-bro-califlower-calilantern-calibration](https://www.printables.com/model/164261-calibration-bro-califlower-calilantern-calibration/files)  
@@ -115,6 +176,8 @@ tbd
 - Filament shrinkage, over-extrusion at the corners, and caliper inaccuracy.
    
 ### Optical print calibration sheet and observe using camera  
+Another option is to use a camera:  
+
 [camera-based-skew-correction-with-charuco-improves-precision-in-3d-printing-and-cnc](https://3druck.com/en/diy/camera-based-skew-correction-with-charuco-improves-precision-in-3d-printing-and-cnc-05149845/)  
 #### Pro:
 - no need for aluminium plate
@@ -126,6 +189,16 @@ tbd
 - unknown accuracy
 
 ### MEASURE_SKEW (This project)
+MEASURE_SKEW follows a different approach.
+The measurement is performed directly on the printer
+using a probe and a reference plate instead of relying
+on printed test parts.
+This avoids influences from filament properties,
+shrinkage, extrusion tolerances, cooling effects like warping or measurement
+errors on printed parts.
+and eliminates the need to print, cool, and manually measure calibration
+objects before calculating the skew correction.
+
 #### Pro
 - accuracy
 - inexpensive equipment (<10,- Eur per 100x100x10mm aluminiumplate
@@ -137,13 +210,13 @@ tbd
 
 
 ## Challenges
-All measurements and evaluations assume linearity of the x- and y-axes,as well as for the edges of the aluminum plate. The xy-skew measurement likely varies depending on the position where it is measured.
+All measurements and evaluations assume linearity of the x- and y-axes,as well as for the edges of the aluminum plate. The xy-skew measurement likely varies depending on the position where on the buildplate it is measured.
 
 ## LoP:  
 - double check, that the sign of xyskew is correct
 - do more measurements and compare results (play with scanspeed, Z_height, NMEAS)
 - try newest version of klipper
-- compare my cartographer.py, etc. with github, new version exist?
+- compare my cartographer.py, etc. with githubs version, are there relevant updates?
 - measure linearity of x/y axis
 - clarify, if the private APIs I used from cartographer.py are stable for future use
 
@@ -157,7 +230,7 @@ Please double-check, if the code is compatible to your printer. It was only test
 - z-homing position 175x175
 - 10mm thick, 100x100mm aluminium plate  
 
-APIs used from other packages:
+### APIs used from other packages:
 - printer.lookup_object('scanner')
 - printer.lookup_object('gcode')
 - printer.lookup_object('toolhead')
@@ -174,6 +247,4 @@ APIs used from other packages:
 
 - gcode.register_command(cmdname,cmd,description)  
 
-Currently there is no experience on any other platform
-
-
+Currently there is no experience on any other platform than mine.
