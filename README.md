@@ -121,7 +121,7 @@ In the actual implementation, all four corners are measured with the aluminium
 plate oriented towards SW, SE, NE, and NW. The resulting calculations are
 therefore slightly more involved, but the underlying principle remains exactly the same:
 
-An example measurement can be found at: TODO upload to youtube and paste link here
+An example measurement can be found at: [Example measurement for MEASURE_SKEW](https://youtu.be/A0ToYC8ICRU)
 
 
 ### The four measurements?
@@ -153,7 +153,8 @@ very small skew errors need to be detected and corrected.
 ### Measurement results
 The following measurement were performed on my Voron 2.4, which is equipped with an A4T toolhead and a cartographer probe.
 
-TODO add my measurements of the 100x100x10 and 80x80x20mm plate
+TODO add my measurements of the 100x100x10 and 70x70x20mm plate
+
 
 
 
