@@ -137,6 +137,39 @@ This allows accurate skew measurements without requiring
 a precision reference artifact.
 - Taking the difference between the measurements isolates the printer's XY skew.
 
+### Measurement details
+
+![image alt](https://github.com/uwedamm/MEASURE_SKEW/blob/4ab2a992bc4c71f27aa0e18ba356836917012ec6/pictures/measure_skew_sampleWEscan.png)  
+
+This plot shows the sensor values of an initial scan from west to east.
+The marking stars on the data in black show the 20%->80% range of the data, which was used
+for a polynomial degree 3 fit to determine the inflection points, which approximately
+show the coordinates, where the inductive probe moves over the edge of the plate.
+These inflection points are shown in dashed red vertical bars.
+The dashed blue vertical bars show the range which is used for the following scanning
+I duplicated the distance between the two inflection points, to be sure to include the plateau
+in the sweep measurements.
+The dashed green vertical bars show the range which is used for range of the sweep, where
+the following scans are performed. I used 50% of the distance between the inflection points for that
+to be sure, that the scans are not to near to the edges.
+
+Using the two initial scans in WE and SN direction, a sweep of NMEAS scans is now performed.
+Scanning in west to east direction and sweeping from south to north.
+The following plot shows the sensor-values for all 25 scans.
+![image alt](https://github.com/uwedamm/MEASURE_SKEW/blob/4ab2a992bc4c71f27aa0e18ba356836917012ec6/pictures/measure_skew_allWEscans.png)  
+
+For each of them the west and east coordinate of the edge is determined as described above.
+These coordinates together with the position of the printhead in y-direction (sweep)
+are input for a linear regression, which gives the slope of the edge of the aluminium plate
+wrt. the expected one (parallel to the printer axis).
+![image alt](https://github.com/uwedamm/MEASURE_SKEW/blob/4ab2a992bc4c71f27aa0e18ba356836917012ec6/pictures/measure_skew_lineregEdge.png)  
+
+The same procedure is applied by scanning in south north direction and sweeping from west to east.  
+
+The overall result gives the angles of west, east, south and north edges of the aluminium plate.
+These angles are used to determine the measured angles of the corners of the plate.
+Using these measured angles from all 4 measurements (rotated by 90° each)
+gives the real angles of the plate and the xy-skew.
 
 ## Experimental results
 
