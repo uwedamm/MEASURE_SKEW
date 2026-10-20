@@ -5,6 +5,13 @@ import math
 import os
 import time
 
+
+# TODO think about using wider range in x and y direction, currently for 70x70mm plate, the range is only 34mm
+#   for 100x100 plate it is axb mm ... to be measured.
+#   This is to avoid scanning to near to the edge
+#   The accuracy raise linearly with this range -> with a 68x68 range, the accuracy would be doubled (failure halfed)
+
+
 # TODO replace calls to "private" cartographer APIs by suitable wrapper
 
 # if DEBUG=1, the scan results are written to: ~/printer_data/gcodes/measure_skew_scan_results.txt
@@ -468,6 +475,20 @@ class SkewScanner:
         self.currz = z
         self.toolhead.wait_moves()
 
+
+    def writeEdge2file(self,fname,lin_data):
+        file_path = os.path.expanduser(f"~/printer_data/gcodes/{fname}")
+        try:
+            with open(file_path, "w") as f:
+                # no Headline (use load in octave)
+                for n, pt in enumerate(lin_data):
+                    f.write(f"{pt['scanpos']:.2f}, {pt['edge_pos']:.2f}\n")
+            self.log(f"write line to file finished")
+        except Exception as e:
+            self.log(f"Could not write to file: {str(e)}")
+    
+
+
     def write_scans_to_file(self):
         file_path = os.path.expanduser("~/printer_data/gcodes/measure_skew_scan_results.txt")
         try:
@@ -520,9 +541,8 @@ class SkewScanner:
         self.xmax -= self.savedist
         self.ymax -= self.savedist
 
-
-        self.log(f"Usage")
-        self.log(f"MEASURE_SKEW XCENTER=175.0 YCENTER=175.0 ZHEIGHT=2.0 SCANSPEED=20 MOVESPEED=200 SAVEDIST=25.0 NMEAS=9")
+# TODO readout XCENTER and YCENTER from klipper
+        self.log(f"MEASURE_SKEW XCENTER={self.xcenter} YCENTER={self.ycenter} ZHEIGHT={self.z_height} SCANSPEED={self.scanspeed} MOVESPEED={self.movespeed} SAVEDIST={self.savedist} NMEAS={self.nmeas}")
         self.log(f"Starting. Corner (1) must point to {self.CORNER_LOCATIONS[self.meascnt - 1]}"
 )
 
@@ -564,19 +584,28 @@ class SkewScanner:
             self.restart_all()
             return
 
+# TODO comment out after documentation for MEASURE_SKEW is finished
+        self.log(f"result of WE and SN scans: xW={xW:.1f} xE={xE:.1f} yS={yS:.1f} yN={yN:.1f}")
+
+
         # Storage for west and east edge positions.
         edg_W_koo = []
         edg_E_koo = []
-        for measind in range(self.nmeas):
-            startx  = 3 * xW/2 - xE/2       # half width to the left from left turnpoint
-            targetx = 3 * xE/2 - xW/2       # half width to the right from right turnpoint
 
-            # starty  = yS + measind * (yN-yS)/(self.nmeas-1.0)
-            rng = yN-yS
+        # These are the settings, which are valid for all scans in WE direction:
+        startx  = 3 * xW/2 - xE/2       # half width to the left from left turnpoint
+        targetx = 3 * xE/2 - xW/2       # half width to the right from right turnpoint
+        rng = yN-yS
+        startz  = self.z_height
+        targetz = self.z_height
+        stepy=rng/(self.nmeas-1.0)
+        miny=yS+rng*0.25
+        maxy=yS+rng*0.75
+        self.log(f"Do WE scan: startx={startx:.1f} targetx={targetx:.1f} yscan={miny:.1f}:{stepy:.1f}:{maxy:.1f}")
+        for measind in range(self.nmeas):
+            # starty  = yS + measind * rng/(self.nmeas-1.0)
             starty  = yS+rng*0.25 + (1.0-2.0*0.25)*measind * rng/(self.nmeas-1.0)
             targety = starty
-            startz  = self.z_height
-            targetz = self.z_height
             self.moveabs_to(startx, starty, startz)
             try:
                 edg_W, edg_E = self.carto_scan(self.DIRX, targetx - startx)
@@ -594,6 +623,9 @@ class SkewScanner:
                     'scanpos': starty,
                     'edge_pos': edg_E
                 })
+
+
+
         # Get angle of W and E edges
         [ang_W, dev_ang_W] = self.get_angle(edg_W_koo)
         [ang_E, dev_ang_E] = self.get_angle(edg_E_koo)
@@ -601,15 +633,22 @@ class SkewScanner:
 
         edg_S_koo = []
         edg_N_koo = []
+
+        # These are the settings, which are valid for all scans in SN direction:
+        starty  = 3 * yS/2 - yN/2       # half width to the left from left turnpoint
+        targety = 3 * yN/2 - yS/2       # half width to the right from right turnpoint
+        rng = xE-xW
+        startz  = self.z_height
+        targetz = self.z_height
+        stepx=rng/(self.nmeas-1.0)
+        minx=xW+rng*0.25
+        maxx=xW+rng*0.75
+        self.log(f"Do SN scan: startx={startx:.1f} targetx={targetx:.1f} yscan={minx:.1f}:{stepx:.1f}:{maxx:.1f}")
+
         for measind in range(self.nmeas):
-            starty  = 3 * yS/2 - yN/2       # half width to the left from left turnpoint
-            targety = 3 * yN/2 - yS/2       # half width to the right from right turnpoint
-            rng = xE-xW
             startx  = xW+rng*0.25 + (1.0-2.0*0.25)*measind * rng/(self.nmeas-1.0)
 
             targetx = startx
-            startz  = self.z_height
-            targetz = self.z_height
             self.moveabs_to(startx, starty, startz)
             try:
                 edg_S, edg_N = self.carto_scan(self.DIRY, targety - starty)
@@ -629,6 +668,15 @@ class SkewScanner:
         # Get angle of W and E edges
         [ang_S, dev_ang_S] = self.get_angle(edg_S_koo)
         [ang_N, dev_ang_N] = self.get_angle(edg_N_koo)
+
+        if self.DEBUGSCANS2TXT:
+# store edg_W_koo, etc for the documentation:
+            self.writeEdge2file("edg_W_koo.txt", edg_W_koo);
+            self.writeEdge2file("edg_E_koo.txt", edg_E_koo);
+            self.writeEdge2file("edg_S_koo.txt", edg_S_koo);
+            self.writeEdge2file("edg_N_koo.txt", edg_N_koo);
+
+
 
 #        if self.DEBUGPRINT:
 # should be printed always, I would like to have an idea about the accuracy
@@ -650,6 +698,9 @@ class SkewScanner:
         if (self.meascnt<4):
             self.log(f"Place (1) to {self.CORNER_LOCATIONS[self.meascnt]}")
             self.meascnt += 1
+# TODO remove after documentation is finished!
+#            if self.DEBUGSCANS2TXT:
+#                self.write_scans_to_file()
         else:
             self.calc_skew()
             if self.DEBUGSCANS2TXT:
