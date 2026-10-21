@@ -182,7 +182,6 @@ class SkewScanner:
         # 2. Berechnung der Diagonalen AC und BD mittels Kosinussatz basierend auf deinem Winkel
 
         # Beim ersten Ansatz mit copilot waren ac und bd vertauscht.
-        # TODO double double check, that the sign of the xy-skew is understood correctly.
         # E.g. set_skew in printer.cfg and check, how the measurement reacts on it.
         # AC liegt gegenüber dem Winkel phi_xy
         ac = math.sqrt(ad**2 + ad**2 - 2 * ad * ad * math.cos(math.radians(180.0 - phi_xy)))
@@ -402,8 +401,21 @@ class SkewScanner:
         # local list for the sensor data, which is collected in the callback
         raw_stream_data = []
 
+# counter for downsampling -> avoid timeout in klipper
+        sample_counter = [0]
+
         def cb(sample):
             total_samples[0] += 1
+            sample_counter[0] += 1
+            
+            # test: 200 -> 1
+            # 10 -> 10
+            # 5 -> 20
+            # Downsampling to avoid timeout error in klipper (if to many samples get read with slow scanspeeds
+            modval=int(math.ceil(100/self.scanspeed))   # use each sample for scanspeed>=100 (-> modval==1)
+            if sample_counter[0] % modval != 0:
+                return
+
             sample_time = sample.get('mcu_time', sample.get('time', sample.get('timestamp', 0.0)))
 
             raw_stream_data.append({
@@ -421,6 +433,9 @@ class SkewScanner:
 
         with self.scanner.streaming_session(cb) as ss:
             self._fly_path(targetx,targety,targetz)
+
+# give some cpu-power back to klipper:
+        self.toolhead.wait_moves()
 
         if self.DEBUGPRINT:
             self.gcmd.respond_info(f"cartographer scan: Sampled {total_samples[0]} total points over")
@@ -466,6 +481,10 @@ class SkewScanner:
         self.n += 1
 
         pos1, pos2 = self.extract_inflection_points(curr_scan)
+        
+        # give klipper air to breath ... fix whenever I do understand, which would work :-(
+#        self.printer.get_reactor().pause(self.printer.get_reactor().now() + 0.02)
+#        self.printer.get_reactor().pause(time.time() + 0.02)
         return pos1, pos2
 
     def moveabs_to(self,x,y,z):
@@ -584,7 +603,7 @@ class SkewScanner:
             self.restart_all()
             return
 
-# TODO comment out after documentation for MEASURE_SKEW is finished
+# show the range, which is used for doing the scans ... more of academic interest...
         self.log(f"result of WE and SN scans: xW={xW:.1f} xE={xE:.1f} yS={yS:.1f} yN={yN:.1f}")
 
 
@@ -698,7 +717,7 @@ class SkewScanner:
         if (self.meascnt<4):
             self.log(f"Place (1) to {self.CORNER_LOCATIONS[self.meascnt]}")
             self.meascnt += 1
-# TODO remove after documentation is finished!
+# used for documentation purpose -> check scans of a single MEASURE_SKEW instance
 #            if self.DEBUGSCANS2TXT:
 #                self.write_scans_to_file()
         else:
