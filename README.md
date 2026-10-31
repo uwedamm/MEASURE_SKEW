@@ -42,6 +42,7 @@ for this measurement method.
 To use this script, you need a 50x50 mm to 150x150 mm aluminium plate or block.  
 MEASURE_SKEW was tested on Voron 2.4 350x350, feedback for other devices is welcome!  
 Cartographer - or other - inductive probe, to detect the edges of the aluminium plate  
+Cartographer firmware: cartographer-klipper (`scanner`) or Cartographer3D plugin v1.x (`cartographer`)  
 Klipper v0.12.0-456. Probably other versions work also fine, but I did not test that
 
 The main principle is to
@@ -49,6 +50,34 @@ a) Measure orientation of the 4 edges of a squared aluminium plate
 b) do same in 4 directions (rotation of the plate by 90° for each measurement)
 c) calculate the 4 corner angles of the cube (just for information, currently not needed)
 d) calculate the xy-skew and printout the correction functionality for printer.cfg
+
+## Installation
+Clone the repository and link the script into the Klipper extras folder:
+
+    cd ~
+    git clone https://github.com/uwedamm/MEASURE_SKEW.git
+    ln -sf ~/MEASURE_SKEW/src/skew_scanner.py ~/klipper/klippy/extras/skew_scanner.py
+
+MEASURE_SKEW needs numpy and scipy in the Klipper python environment:
+
+    ~/klippy-env/bin/pip install numpy scipy
+
+Add to printer.cfg:
+
+    [skew_scanner]
+
+Restart Klipper:
+
+    sudo systemctl restart klipper
+
+Add the updater section to moonraker.conf and restart moonraker to receive updates:
+
+    [update_manager measure_skew]
+    type: git_repo
+    path: ~/MEASURE_SKEW
+    origin: https://github.com/uwedamm/MEASURE_SKEW.git
+    primary_branch: main
+    managed_services: klipper
 
 ## How to use (Basic workflow)
 - Switch on the Printer.
@@ -265,7 +294,8 @@ Please double-check, if the code is compatible to your printer. It was only test
 - 10mm thick, 100x100mm aluminium plate  
 
 ### APIs used from other packages:
-- printer.lookup_object('scanner')
+- printer.lookup_object('scanner') (cartographer-klipper)
+- printer.lookup_object('cartographer') (Cartographer3D plugin v1.x)
 - printer.lookup_object('gcode')
 - printer.lookup_object('toolhead')
 
@@ -276,6 +306,10 @@ Please double-check, if the code is compatible to your printer. It was only test
 - scanner._start_streaming
 - scanner._sample_printtime_sync(???)
 - scanner.streaming_session(callback)
+
+- cartographer.mcu.start_session() (Cartographer3D plugin v1.x)
+- cartographer.mcu.register_callback(callback)
+- cartographer.mcu.unregister_callback(callback)
 
 - gcmd.respond_info(string)
 
