@@ -85,6 +85,7 @@ Run `SKEW_WIZARD` with a cold bed and follow the pop-ups.
 To make it the default, set `variable_edgescan: 1` in the override above.
 SKEW_WIZARD clears the active skew correction before measuring. Load your skew profile again afterwards.
 If a measurement fails, MEASURE_SKEW resets all orientations and ends with an error, which stops the wizard. Start again with `SKEW_WIZARD`.
+Only click Measure after rotating the plate: a click while a step is still running is ignored, it does not start the next step.
 
 ## Principle of the Measurement
 Scanning the aluminium plate with the Cartographer probe provides
