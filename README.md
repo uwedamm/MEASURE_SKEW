@@ -81,6 +81,8 @@ If your Z-homing position is not X175 Y175, override it in printer.cfg below the
     variable_center_y: 150
 
 Run `SKEW_WIZARD` with a cold bed and follow the pop-ups.
+`SKEW_WIZARD EDGESCAN=1` passes EDGESCAN=1 to all 4 measurements (needs a MEASURE_SKEW version with EDGESCAN).
+To make it the default, set `variable_edgescan: 1` in the override above.
 SKEW_WIZARD clears the active skew correction before measuring. Load your skew profile again afterwards.
 
 ## Principle of the Measurement
