@@ -84,6 +84,7 @@ Run `SKEW_WIZARD` with a cold bed and follow the pop-ups.
 `SKEW_WIZARD EDGESCAN=1` passes EDGESCAN=1 to all 4 measurements (needs a MEASURE_SKEW version with EDGESCAN).
 To make it the default, set `variable_edgescan: 1` in the override above.
 SKEW_WIZARD clears the active skew correction before measuring. Load your skew profile again afterwards.
+If a measurement fails, MEASURE_SKEW resets all orientations and ends with an error, which stops the wizard. Start again with `SKEW_WIZARD`.
 
 ## Principle of the Measurement
 Scanning the aluminium plate with the Cartographer probe provides
