@@ -202,8 +202,18 @@ Parameters (all optional):
 
 The window size is measured on each run, so it follows plate thickness, ZHEIGHT and probe.
 Plates narrower than two plate-side windows (about 30mm) are rejected with EDGESCAN=1.
-In a simulation based on recorded scans of a 100x100x10mm plate, a measurement took
-about 100s instead of about 230s with the same accuracy.
+Validation on a Voron 2.4 (Cartographer, 100x100x10mm plate, defaults otherwise),
+same plate placements for both modes:
+
+| | EDGESCAN=0 | EDGESCAN=1 |
+|---|---|---|
+| time per measurement | ~244s | ~114s |
+| m_phi_xy (4 orientations) | 89.9441 | 89.9301 |
+| run-to-run scatter of the edge angles (RMS, 3 runs, same data) | 0.019 deg | 0.015 deg |
+
+The difference of 0.014 deg is within the expected noise of the difference (about 0.011 deg).
+Applying both edge detections to the same raw data gives differences of the same size,
+so it comes from the detection, not from the scan speed.
 
 ## Experimental results
 
