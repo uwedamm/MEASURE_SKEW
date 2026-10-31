@@ -62,6 +62,27 @@ d) calculate the xy-skew and printout the correction functionality for printer.c
 - After measurement is finished, rotate the aluminium plate by 90° around the Z-axis.
 - Repeat the previous two steps four times.
 
+## Guided measurement (SKEW_WIZARD)
+skew_wizard.cfg contains a macro, which guides you through the 4 measurements with pop-ups in Mainsail/Fluidd.
+
+Link it into your config folder:
+
+    ln -sf ~/MEASURE_SKEW/skew_wizard.cfg ~/printer_data/config/skew_wizard.cfg
+
+Add to printer.cfg:
+
+    [respond]
+    [include skew_wizard.cfg]
+
+If your Z-homing position is not X175 Y175, override it in printer.cfg below the include:
+
+    [gcode_macro SKEW_WIZARD]
+    variable_center_x: 150
+    variable_center_y: 150
+
+Run `SKEW_WIZARD` with a cold bed and follow the pop-ups.
+SKEW_WIZARD clears the active skew correction before measuring. Load your skew profile again afterwards.
+
 ## Principle of the Measurement
 Scanning the aluminium plate with the Cartographer probe provides
 the measured directions of the four edges of the aluminium plate.
