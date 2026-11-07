@@ -26,8 +26,14 @@ For updates, the following is done:
 
 - check PR2 from eMadman
 	- replace skew_scanner.py by PR2
-	- Update printer.cfg according to hints in skew_scanner.py
-		TODO check, that these hints are given in README.md, else add them
-	- execute (4 times) MEASURE_SKEW XCENTER=175.0 YCENTER=175.0 ZHEIGHT=2.0 SCANSPEED=100 MOVESPEED=500 SAVEDIST=25.0 NMEAS=4
+	- Update printer.cfg according to hints in README.md
+	- installed skew_wizzard
+	- executed skew_wizzard
+	- finalized all 4 measurements
+		RESULT: PASSED
+
+- TODO check PR3 from eMadman
+	- perform skew_wizzard once more with the updated skew_scanner.py
 		RESULT: 
-	
+	- perform SKEW_WIZARD EDGESCAN=1
+		RESULT: 
