@@ -1,0 +1,25 @@
+This SW comes as is.
+Only basic testing by using my own is performed.
+
+For updates, the following is done:
+- Follow "How to use (Basic workflow)"
+- run complete loop (4 executions)
+- check xyskew result for plausibility
+
+7.11.2026
+- check PR1 from eMadman
+	- replace skew_scanner.py by PR1
+	- execute (4 times) MEASURE_SKEW XCENTER=175.0 YCENTER=175.0 ZHEIGHT=2.0 SCANSPEED=100 MOVESPEED=500 SAVEDIST=25.0 NMEAS=4
+		RESULT: PASSED
+	- replace cartographer SW by most recent version
+		- old version:
+			cartographer.py v1.0.0.34
+			scanner.py v4.1.0
+			- updated cartographer firmware to 6.1.0
+	- use new skew_scanner.py from PR1
+		execute MEASURE_SKEW
+		RESULT: PASSED
+	- check for error with old skew_scanner.py
+		self.scanner = self.printer.lookup_object('scanner')
+			raised failure as expected
+		RESULT: PASSED
