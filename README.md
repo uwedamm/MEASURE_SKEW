@@ -225,6 +225,50 @@ These angles are used to determine the measured angles of the corners of the pla
 Using these measured angles from all 4 measurements (rotated by 90° each)
 gives the real angles of the plate and the xy-skew.
 
+### Faster scanning (EDGESCAN=1)
+
+Only the edge transitions carry information, but every sweep line is scanned
+at SCANSPEED over twice the plate width. With `EDGESCAN=1`:
+
+- The two initial scans run at COARSESPEED (default 100mm/s); they only need the approximate edges.
+- The first line of each sweep is scanned slowly over the full width (calibration line).
+  It measures how wide the transition is: the distance from the edge to the 5% signal level
+  (off the plate) and to the 95% level (on the plate).
+- This sets the window around each edge: off-plate side = 1x the 5% distance,
+  plate side = 2x the 95% distance. Inside the windows the scan runs at SCANSPEED,
+  between them at MOVESPEED.
+- Each edge is detected from its window alone: the window's own min/max define the
+  20%->80% range for the polynomial fit, and the window is re-centred on the found edge.
+  All lines (including the calibration line) use this detection, so they stay comparable.
+- The window position for the next line is predicted from the edges found so far,
+  so a rotated plate is followed.
+- A line whose window check fails (window not covered by the slow part, too little signal
+  range, fit outside the 20%->80% range, ...) is rescanned slowly over the full width.
+  If that fails too, the measurement is aborted, it never mixes detection methods.
+
+Parameters (all optional):
+
+    MEASURE_SKEW EDGESCAN=1 COARSESPEED=100 EDGEOFF=0 EDGEON=0
+
+- EDGESCAN: 0 = scan full lines at SCANSPEED (default), 1 = edge windows
+- COARSESPEED: speed of the two initial scans (default: 100 with EDGESCAN=1, SCANSPEED otherwise)
+- EDGEOFF / EDGEON: fixed window size in mm on the off-plate / plate side, 0 = auto (default)
+
+The window size is measured on each run, so it follows plate thickness, ZHEIGHT and probe.
+Plates narrower than two plate-side windows (about 30mm) are rejected with EDGESCAN=1.
+Validation on a Voron 2.4 (Cartographer, 100x100x10mm plate, defaults otherwise),
+same plate placements for both modes:
+
+| | EDGESCAN=0 | EDGESCAN=1 |
+|---|---|---|
+| time per measurement | ~244s | ~114s |
+| m_phi_xy (4 orientations) | 89.9441 | 89.9301 |
+| run-to-run scatter of the edge angles (RMS, 3 runs, same data) | 0.019 deg | 0.015 deg |
+
+The difference of 0.014 deg is within the expected noise of the difference (about 0.011 deg).
+Applying both edge detections to the same raw data gives differences of the same size,
+so it comes from the detection, not from the scan speed.
+
 ## Experimental results
 
 ### Expected accuracy
