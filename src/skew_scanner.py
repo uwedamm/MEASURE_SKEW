@@ -529,6 +529,16 @@ class SkewScanner:
 
 
     def create_MEASURE_SKEW(self, gcmd):
+        # A failed measurement resets all orientations (restart_all) and returns.
+        # Report it as a G-code error, so calling macros (e.g. SKEW_WIZARD) stop.
+        self._completed = False
+        self._measure_skew(gcmd)
+        if not self._completed:
+            raise gcmd.error("MEASURE_SKEW failed, all measurements were reset."
+                             " Place (1) to SW and start again.")
+
+
+    def _measure_skew(self, gcmd):
         self.toolhead = self.printer.lookup_object('toolhead')
         # Old cartographer-klipper registers 'scanner'; Cartographer3D plugin v1.x registers 'cartographer'.
         self.scanner = self.printer.lookup_object('scanner', None)
@@ -737,6 +747,7 @@ class SkewScanner:
         if valtoprint==0:
             valtoprint = 4
         self.log(f"{valtoprint} measurement finished.")
+        self._completed = True
 
 
 # install the new command

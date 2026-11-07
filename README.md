@@ -91,6 +91,31 @@ Add the updater section to moonraker.conf and restart moonraker to receive updat
 - After measurement is finished, rotate the aluminium plate by 90° around the Z-axis.
 - Repeat the previous two steps four times.
 
+## Guided measurement (SKEW_WIZARD)
+skew_wizard.cfg contains a macro, which guides you through the 4 measurements with pop-ups in Mainsail/Fluidd.
+
+Link it into your config folder:
+
+    ln -sf ~/MEASURE_SKEW/skew_wizard.cfg ~/printer_data/config/skew_wizard.cfg
+
+Add to printer.cfg:
+
+    [respond]
+    [include skew_wizard.cfg]
+
+If your Z-homing position is not X175 Y175, override it in printer.cfg below the include:
+
+    [gcode_macro SKEW_WIZARD]
+    variable_center_x: 150
+    variable_center_y: 150
+
+Run `SKEW_WIZARD` with a cold bed and follow the pop-ups.
+`SKEW_WIZARD EDGESCAN=1` passes EDGESCAN=1 to all 4 measurements (needs a MEASURE_SKEW version with EDGESCAN).
+To make it the default, set `variable_edgescan: 1` in the override above.
+SKEW_WIZARD clears the active skew correction before measuring. Load your skew profile again afterwards.
+If a measurement fails, MEASURE_SKEW resets all orientations and ends with an error, which stops the wizard. Start again with `SKEW_WIZARD`.
+Only click Measure after rotating the plate: a click while a step is still running is ignored, it does not start the next step.
+
 ## Principle of the Measurement
 Scanning the aluminium plate with the Cartographer probe provides
 the measured directions of the four edges of the aluminium plate.
