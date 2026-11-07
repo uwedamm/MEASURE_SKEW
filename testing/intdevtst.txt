@@ -7,7 +7,7 @@ For updates, the following is done:
 - check xyskew result for plausibility
 
 7.11.2026
-- check PR1 from eMadman
+- check PR1
 	- replace skew_scanner.py by PR1
 	- execute (4 times) MEASURE_SKEW XCENTER=175.0 YCENTER=175.0 ZHEIGHT=2.0 SCANSPEED=100 MOVESPEED=500 SAVEDIST=25.0 NMEAS=4
 		RESULT: PASSED
@@ -24,7 +24,7 @@ For updates, the following is done:
 			raised failure as expected
 		RESULT: PASSED
 
-- check PR2 from eMadman
+- check PR2
 	- replace skew_scanner.py by PR2
 	- Update printer.cfg according to hints in README.md
 	- installed skew_wizzard
@@ -32,8 +32,9 @@ For updates, the following is done:
 	- finalized all 4 measurements
 		RESULT: PASSED
 
-- TODO check PR3 from eMadman
+- check PR3
 	- perform skew_wizzard once more with the updated skew_scanner.py
-		RESULT: 
+		RESULT: PASSED
 	- perform SKEW_WIZARD EDGESCAN=1
-		RESULT: 
+		RESULT: PASSED
+		only quickscan performed, but the results looked plausible
