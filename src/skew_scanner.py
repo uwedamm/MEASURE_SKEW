@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.signal import savgol_filter
 from scipy.stats import linregress
+import contextlib
 import math
 import os
 import time
@@ -40,6 +41,8 @@ import time
 # MEASURE_SKEW XCENTER=175.0 YCENTER=175.0 ZHEIGHT=2.0 SCANSPEED=20 MOVESPEED=200 SAVEDIST=25.0 NMEAS=9
 # Rotate the plate by 90° around the Z-axis.
 # Repeat the previous two steps four times.
+
+# Works with cartographer-klipper ('scanner') and Cartographer3D plugin v1.x ('cartographer').
 
 # How to install this script into klipper:
 # Add to printer.cfg:
@@ -527,7 +530,10 @@ class SkewScanner:
 
     def create_MEASURE_SKEW(self, gcmd):
         self.toolhead = self.printer.lookup_object('toolhead')
-        self.scanner = self.printer.lookup_object('scanner')
+        # Old cartographer-klipper registers 'scanner'; Cartographer3D plugin v1.x registers 'cartographer'.
+        self.scanner = self.printer.lookup_object('scanner', None)
+        if self.scanner is None:
+            self.scanner = _Carto1ScannerShim(self.printer.lookup_object('cartographer'))
         self.gcmd = gcmd
 
         # Read command parameters.
@@ -736,3 +742,34 @@ class SkewScanner:
 # install the new command
 def load_config(config):
     return SkewScanner(config)
+
+
+class _Carto1ScannerShim:
+    """Adapts the Cartographer3D plugin v1.x stream API to the three calls
+    MEASURE_SKEW used on the old cartographer-klipper 'scanner' object."""
+
+    def __init__(self, cartographer):
+        self.mcu = cartographer.mcu
+
+    def _start_streaming(self):
+        pass  # v1.x starts streaming when a session opens
+
+    def _sample_printtime_sync(self, *args, **kwargs):
+        pass  # v1.x timestamps samples in print time already
+
+    @contextlib.contextmanager
+    def streaming_session(self, callback):
+        def wrapped(sample):
+            pos = sample.position
+            callback({
+                'freq': sample.frequency,
+                'time': sample.time,
+                'pos': None if pos is None else [pos.x, pos.y, pos.z],
+            })
+        session = self.mcu.start_session()  # turns the sensor stream on
+        self.mcu.register_callback(wrapped)
+        try:
+            yield session
+        finally:
+            self.mcu.unregister_callback(wrapped)
+            session.__exit__(None, None, None)  # ends session, stream stops
